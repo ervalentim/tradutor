@@ -113,6 +113,83 @@ class CodeWriter:
         self.write("D=M")
         self.write("A=A-1")
         self.write("M=D|M")
+        
+    def write_arithmetic_not(self):
+        self.write("@SP // not")
+        self.write("A=M")
+        self.write("A=A-1")
+        self.write("M=!M")
+
+    def write_arithmetic_eq(self):
+        label = f"JEQ_{self.module_name}_{self.syn_count}"
+        self.write(f"@SP // eq")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write("@SP")
+        self.write("AM=M-1")
+        self.write("D=M-D")
+        self.write(f"@{label}")
+        self.write("D;JEQ")
+        self.write("D=1")
+        self.write(f"({label})")
+        self.write("D=D-1")
+        self.write("@SP")
+        self.write("A=M")
+        self.write("M=D")
+        self.write("@SP")
+        self.write("M=M+1")
+
+        self.syn_count += 1
+
+    def write_arithmetic_gt(self):
+        label_true = f"JGT_TRUE_{self.module_name}_{self.syn_count}"
+        label_false = f"JGT_FALSE_{self.module_name}_{self.syn_count}"
+        self.write("@SP // gt")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write("@SP")
+        self.write("AM=M-1")
+        self.write("D=M-D")
+        self.write(f"@{label_true}")
+        self.write("D;JGT")
+        self.write("D=0")
+        self.write(f"@{label_false}")
+        self.write("0;JMP")
+        self.write(f"({label_true})")
+        self.write("D=-1")
+        self.write(f"({label_false})")
+        self.write("@SP")
+        self.write("A=M")
+        self.write("M=D")
+        self.write("@SP")
+        self.write("M=M+1")
+
+        self.syn_count += 1
+
+    def write_arithmetic_lt(self):
+        label_true = f"JLT_TRUE_{self.module_name}_{self.syn_count}"
+        label_false = f"JLT_FALSE_{self.module_name}_{self.syn_count}"
+        self.write("@SP // lt")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write("@SP")
+        self.write("AM=M-1")
+        self.write("D=M-D")
+        self.write(f"@{label_true}")
+        self.write("D;JLT")
+        self.write("D=0")
+        self.write(f"@{label_false}")
+        self.write("0;JMP")
+        self.write(f"({label_true})")
+        self.write("D=-1")
+        self.write(f"({label_false})")
+        self.write("@SP")
+        self.write("A=M")
+        self.write("M=D")
+        self.write("@SP")
+        self.write("M=M+1")
+
+        self.syn_count += 1
 
     def write(self, s):
         self.output.append(f"{s}\n")
