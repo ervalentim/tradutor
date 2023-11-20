@@ -76,11 +76,35 @@ class CodeWriter:
             write("@R13")
             write("A=M")
             write("M=D")
+    
+    def writeArithmeticAdd():
+        write("@SP  // add")
+        write("M=M-1")
+        write("A=M")
+        write("D=M")
+        write("A=A-1")
+        write("M=D+M")
 
+    def writeArithmeticSub():
+        write("@SP  // sub")
+        write("M=M-1")
+        write("A=M")
+        write("D=M")
+        write("A=A-1")
+        write("M=M-D")
 
-    def write(self, line):
-        self.output.append(line)
+    def writeArithmeticNeg():
+        write("@SP  // neg")
+        write("A=M")
+        write("A=A-1")
+        write("M=-M")
 
-    def save_to_file(self, file_name):
-        with open(file_name, "w") as file:
-            file.write("\n".join(self.output))
+    def write(self, s):
+        self.output.append(f"{s}\n")
+
+    def code_output(self):
+        return "".join(self.output)
+
+    def save(self):
+        with open(self.output_file_name, "w") as file:
+            file.write("".join(self.output))
