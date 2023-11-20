@@ -9,7 +9,7 @@ class CodeWriter:
         self.module_name = s[s.rfind("/") + 1:s.index(".")]
         print(self.module_name)
 
-    def register_name(self, segment, index):
+    def registerName(self, segment, index):
         if segment == "local":
             return "LCL"
         elif segment == "argument":
@@ -25,7 +25,7 @@ class CodeWriter:
 
         return f"{self.module_name}.{index}"
 
-    def write_push(self, seg, index):
+    def writePush(self, seg, index):
         if seg == "constant":
             self.write(f"@{index}  // push {seg} {index}")
             self.write("D=A")
@@ -53,6 +53,30 @@ class CodeWriter:
             self.write("M=D")
             self.write("@SP")
             self.write("M=M+1")
+    
+    def writePop(seg, index):
+        if seg in ["static", "temp", "pointer"]:
+            write(f"@SP  // pop {seg} {index}")
+            write("M=M-1")
+            write("A=M")
+            write("D=M")
+            write(f"@{register_name(seg, index)}")
+            write("M=D")
+        else:
+            write(f"@{register_name(seg, 0)}  // pop {seg} {index}")
+            write("D=M")
+            write(f"@{index}")
+            write("D=D+A")
+            write("@R13")
+            write("M=D")
+            write("@SP")
+            write("M=M-1")
+            write("A=M")
+            write("D=M")
+            write("@R13")
+            write("A=M")
+            write("M=D")
+
 
     def write(self, line):
         self.output.append(line)
