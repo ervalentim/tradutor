@@ -1,5 +1,19 @@
 {
-    "python.defaultInterpreterPath": "C:\\Users\\JbBiC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
-    "python.terminal.executeInFileDir": true,
-    "python.terminal.launchArgs": ["D:\\COMPILADORES\\projetos\\StackArithmetic\\SimpleAdd\\SimpleAdd.vm"]
-}
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Compile VM",
+        "type": "shell",
+        "command": "python",
+        "args": [
+          "D:\\COMPILADORES\\tradutor\\App.py",
+          "D:\\COMPILADORES\\tradutor\\SimpleAdd.vm"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
+  

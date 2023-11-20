@@ -1,15 +1,18 @@
+from Command import Command
 class Parser:
-  def __init__ (self, filename):
-    self.file = open(filename,"r")
-    self.tokens = [ x.split() for x in self.file.readlines() if "//" not in x and x.strip() != ""]
+    def __init__(self, input_text):
+        self.commands = [Command(line.split()) for line in input_text.split('\n') if line.strip()]
+        self.tokens = [line.split() for line in input_text.split('\n') if "//" not in line and line.strip() != ""]
 
-  def command(self):
-    return self.tokens.pop(0)
-  
-  def hasMoreCommands(self):
-    return self.tokens != []
+    def command(self):
+        return self.tokens.pop(0)
 
-p = Parser("teste.vm")
-while p.hasMoreCommands():
-  command = p.command()
-  print (command)
+    def hasMoreCommands(self):
+        return bool(self.tokens)
+    
+    def nextCommand(self):
+        if self.commands:
+          return self.commands.pop(0)
+        else:
+          return None
+

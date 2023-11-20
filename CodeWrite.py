@@ -200,13 +200,3 @@ class CodeWriter:
     def save(self):
         with open(self.output_file_name, "w") as file:
             file.write("".join(self.output))
-
-
-code_writer = CodeWriter()
-code_writer.write_arithmetic_and()
-code_writer.write_arithmetic_or()
-code_writer.write_arithmetic_not()
-code_writer.write_arithmetic_eq()
-code_writer.write_arithmetic_gt()
-code_writer.write_arithmetic_lt()
-print(code_writer.output)
