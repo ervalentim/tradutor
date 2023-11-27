@@ -1,0 +1,5 @@
+// IfTest.vm
+push constant 5
+push constant 5
+eq
+if-goto Loop

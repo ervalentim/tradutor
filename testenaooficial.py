@@ -24,15 +24,27 @@ code_writer = CodeWriter("output.asm")
 
 # print("Teste bem-sucedido!")
 
-code_writer.set_file_name("GotoTest.vm")
-code_writer.write_goto("Loop")
+# code_writer.set_file_name("GotoTest.vm")
+# code_writer.write_goto("Loop")
 
-expected_output = """@GotoTest.Loop
-0;JMP
+# expected_output = """@GotoTest.Loop
+# 0;JMP
+# """
+
+# assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
+
+# print("Teste bem-sucedido!")
+
+code_writer.set_file_name("IfTest.vm")
+code_writer.write_if("Loop")
+
+expected_output = """@SP
+AM=M-1
+D=M
+@IfTest.Loop
+D;JNE
 """
-print(code_writer.code_output())
-print(expected_output)
-
+# print(code_writer.code_output())
 assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
 
 print("Teste bem-sucedido!")
