@@ -35,22 +35,77 @@ code_writer = CodeWriter("output.asm")
 
 # print("Teste bem-sucedido!")
 
-code_writer.set_file_name("IfTest.vm")
-code_writer.write_if("Loop")
+# code_writer.set_file_name("IfTest.vm")
+# code_writer.write_if("Loop")
 
-expected_output = """@SP
-AM=M-1
+# expected_output = """@SP
+# AM=M-1
+# D=M
+# @IfTest.Loop
+# D;JNE
+# """
+# assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
+
+# print("Teste bem-sucedido!")
+
+code_writer.set_file_name("CallTest.vm")
+
+code_writer.write_call("Main.calledFunction", 1)
+
+expected_output = """@Main.calledFunction$ret.0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@LCL
 D=M
-@IfTest.Loop
-D;JNE
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@ARG
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@THIS
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@THAT
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@SP
+D=M
+@6
+D=D-A
+@ARG
+M=D
+@SP
+D=M
+@LCL
+M=D
+@Main.calledFunction
+0;JMP
+(Main.calledFunction$ret.0)
 """
-# print(code_writer.code_output())
+
+#print(code_writer.code_output())
 assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
 
 print("Teste bem-sucedido!")
-
-
-
 
 
 
