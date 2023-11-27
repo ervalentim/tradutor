@@ -200,3 +200,126 @@ class CodeWriter:
     def save(self):
         with open(self.output_file_name, "w") as file:
             file.write("".join(self.output))
+
+# Novos métodos
+    def write_label(self, label):
+        formatted_label = f"{self.module_name}.{label}"
+        self.write(f"({formatted_label})")
+    def write_goto(self, label):
+        formatted_label = f"{self.module_name}.{label}"
+        self.write(f"@{formatted_label}")
+        self.write("0;JMP")
+    def write_if(self, label):
+        formatted_label = f"{self.module_name}.{label}"
+        self.write("@SP")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write(f"@{formatted_label}")
+        self.write("D;JNE")
+    def write_call(self, function_name, num_args):
+        return_label = f"{function_name}$ret.{self.syn_count}"
+        self.syn_count += 1
+
+        # Push return address
+        self.write(f"@{return_label}")
+        self.write("D=A")
+        self.write("@SP")
+        self.write("A=M")
+        self.write("M=D")
+        self.write("@SP")
+        self.write("M=M+1")
+        # Push LCL, ARG, THIS, THAT
+        for segment in ["LCL", "ARG", "THIS", "THAT"]:
+            self.write(f"@{segment}")
+            self.write("D=M")
+            self.write("@SP")
+            self.write("A=M")
+            self.write("M=D")
+            self.write("@SP")
+            self.write("M=M+1")
+
+        # Set ARG to SP - 5 - num_args
+        self.write("@SP")
+        self.write("D=M")
+        self.write(f"@{num_args + 5}")
+        self.write("D=D-A")
+        self.write("@ARG")
+        self.write("M=D")
+
+        # Set LCL to SP
+        self.write("@SP")
+        self.write("D=M")
+        self.write("@LCL")
+        self.write("M=D")
+
+        # Jump to function
+        self.write(f"@{function_name}")
+        self.write("0;JMP")
+
+        # Write return label
+        self.write(f"({return_label})")
+    def write_function(self, function_name, num_locals):
+        formatted_function_name = f"{self.module_name}.{function_name}"
+        self.write(f"({formatted_function_name})")
+
+        # Initialize local variables to 0
+        for _ in range(num_locals):
+            self.write("@SP")
+            self.write("A=M")
+            self.write("M=0")
+            self.write("@SP")
+            self.write("M=M+1")
+
+    def write_return(self):
+        # Save LCL in FRAME
+        self.write("@LCL")
+        self.write("D=M")
+        self.write("@R13")
+        self.write("M=D")
+
+        # Retrieve return address
+        self.write("@5")
+        self.write("A=D-A")
+        self.write("D=M")
+        self.write("@R14")
+        self.write("M=D")
+
+        # Reposition return value for caller
+        self.write("@SP")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write("@ARG")
+        self.write("A=M")
+        self.write("M=D")
+
+        # Restore SP of caller
+        self.write("@ARG")
+        self.write("D=M+1")
+        self.write("@SP")
+        self.write("M=D")
+
+        # Restore THAT, THIS, ARG, LCL of caller
+        for segment, offset in zip(["THAT", "THIS", "ARG", "LCL"], [1, 2, 3, 4]):
+            self.write("@R13")
+            self.write("AM=M-1")
+            self.write("D=M")
+            self.write(f"@{offset}")
+            self.write("A=D-A")
+            self.write("D=M")
+            self.write(f"@{segment}")
+            self.write("M=D")
+
+        # Jump to return address
+        self.write("@R14")
+        self.write("A=M")
+        self.write("0;JMP")
+
+    def write_init(self):
+        # Initialize SP to 256
+        self.write("@256")
+        self.write("D=A")
+        self.write("@SP")
+        self.write("M=D")
+
+        # Call Sys.init
+        self.write_call("Sys.init", 0)

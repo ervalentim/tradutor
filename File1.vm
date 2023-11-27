@@ -1,0 +1,5 @@
+// File1.vm
+function Main.main 0
+push constant 7
+call Math.sqrt 1
+pop local 0

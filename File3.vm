@@ -1,0 +1,4 @@
+// File3.vm
+push constant 100
+push constant 50
+sub
