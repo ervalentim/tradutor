@@ -203,7 +203,7 @@ class CodeWriter:
 
 # Novos métodos
     def write_label(self, label):
-        formatted_label = f"{self.module_name}.{label}"
+        formatted_label = f"{self.module_name}${label}"
         self.write(f"({formatted_label})")
     def write_goto(self, label):
         formatted_label = f"{self.module_name}.{label}"
