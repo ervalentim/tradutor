@@ -203,12 +203,14 @@ class CodeWriter:
 
 # Novos métodos
     def write_label(self, label):
+
         formatted_label = f"{self.module_name}${label}"
         self.write(f"({formatted_label})")
     def write_goto(self, label):
         formatted_label = f"{self.module_name}${label}"
         self.write(f"@{formatted_label}")
         self.write("0;JMP")
+
     def write_if(self, label):
         formatted_label = f"{self.module_name}${label}"
         self.write("@SP")
@@ -216,12 +218,13 @@ class CodeWriter:
         self.write("D=M")
         self.write(f"@{formatted_label}")
         self.write("D;JNE")
+
     def write_call(self, function_name, num_args):
         return_label = f"{function_name}$ret.{self.syn_count}"
         self.syn_count += 1
 
         # Push return address
-        self.write(f"@{return_label}")
+        self.write(f"@{return_label} // {function_name} {num_args}")
         self.write("D=A")
         self.write("@SP")
         self.write("A=M")
@@ -239,10 +242,11 @@ class CodeWriter:
             self.write("M=M+1")
 
         # Set ARG to SP - 5 - num_args
+        self.write(f"@{num_args}")
+        self.write("D=A")
+        self.write("@5")
+        self.write("D=D+A")
         self.write("@SP")
-        self.write("D=M")
-        self.write(f"@{num_args + 5}")
-        self.write("D=D-A")
         self.write("@ARG")
         self.write("M=D")
 
@@ -253,8 +257,7 @@ class CodeWriter:
         self.write("M=D")
 
         # Jump to function
-        self.write(f"@{function_name}")
-        self.write("0;JMP")
+        self.write_goto(function_name)
 
         # Write return label
         self.write(f"({return_label})")
@@ -295,11 +298,10 @@ class CodeWriter:
         self.write("A=M")
         self.write("M=D")
 
-        # Restore SP of caller
-        self.write("@ARG")
-        self.write("D=M+1")
+        
+        self.write("D=A")
         self.write("@SP")
-        self.write("M=D")
+        self.write("M=D+1")
 
         # Restore THAT, THIS, ARG, LCL of caller
         for segment, offset in zip(["THAT", "THIS", "ARG", "LCL"], [1, 2, 3, 4]):
@@ -307,9 +309,6 @@ class CodeWriter:
             self.write("AM=M-1")
             self.write("D=M")
             self.write(f"@{offset}")
-            self.write("A=D-A")
-            self.write("D=M")
-            self.write(f"@{segment}")
             self.write("M=D")
 
         # Jump to return address
@@ -326,3 +325,4 @@ class CodeWriter:
 
         # Call Sys.init
         self.write_call("Sys.init", 0)
+    
