@@ -8,7 +8,7 @@ def from_file(file):
         with open(file, "r", encoding="utf-8") as f:
             return f.read()
     except IOError as e:
-        print(f"Error reading file: {e}")
+        print(f"Erro ao ler aqruivo: {e}")
         return ""
 
 
@@ -76,12 +76,12 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) != 2:
-        print("Please provide a single file path argument.")
+        print("Forneça um único argumento de caminho de arquivo")
         sys.exit(1)
 
     file_path = sys.argv[1]
     if not os.path.exists(file_path):
-        print("The file doesn't exist.")
+        print("O arquivo nao existe.")
         sys.exit(1)
 
     if os.path.isdir(file_path):
@@ -94,20 +94,20 @@ if __name__ == "__main__":
         for filename in os.listdir(file_path):
             if filename.endswith(".vm"):
                 input_file_name = os.path.join(file_path, filename)
-                print(f"compiling {input_file_name}")
+                print(f"compilando {input_file_name}")
                 translate_file(input_file_name, code_writer)
 
         code_writer.save()
     elif os.path.isfile(file_path):
         if not file_path.endswith(".vm"):
-            print("Please provide a file name ending with .vm")
+            print("PForneça um nome de arquivo que termine com .vm")
             sys.exit(1)
         else:
             input_file_name = file_path
             pos = input_file_name.index('.')
             output_file_name = f"{input_file_name[:pos]}.asm"
             code_writer = CodeWriter(output_file_name)
-            print(f"compiling {input_file_name}")
+            print(f"compilando {input_file_name}")
             code_writer.write_init()
             translate_file(input_file_name, code_writer)
             code_writer.save()

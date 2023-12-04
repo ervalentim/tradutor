@@ -215,15 +215,6 @@ class CodeWriter:
         self.write("D=M")
         self.write(f"@{label}")
         self.write("D;JNE")
-    
-    # def write_frame_push(segment):
-    #         self.write(f"@{segment}")
-    #         self.write("D=M")
-    #         self.write("@SP")
-    #         self.write("A=M")
-    #         self.write("M=D")
-    #         self.write("@SP")
-    #         self.write("M=M+1")
 
     def write_call(self, function_name, num_args):
         comment = f"// call {function_name} {num_args}"
@@ -231,7 +222,7 @@ class CodeWriter:
         return_addr = f"{function_name}_RETURN_{self.syn_count}"
         self.syn_count += 1
 
-        self.write(f"@{return_addr} {comment}")  # push return-addr
+        self.write(f"@{return_addr} {comment}") 
         self.write("D=A")
         self.write("@SP")
         self.write("A=M")
@@ -253,7 +244,7 @@ class CodeWriter:
         write_frame_push("THIS")
         write_frame_push("THAT")
 
-        self.write(f"@{num_args}")  # ARG = SP-n-5
+        self.write(f"@{num_args}")  
         self.write("D=A")
         self.write("@5")
         self.write("D=D+A")
@@ -262,14 +253,14 @@ class CodeWriter:
         self.write("@ARG")
         self.write("M=D")
 
-        self.write("@SP")  # LCL = SP
+        self.write("@SP")  
         self.write("D=M")
         self.write("@LCL")
         self.write("M=D")
 
         self.write_goto(function_name)
 
-        self.write(f"({return_addr})")  # (return-address)
+        self.write(f"({return_addr})") 
 
     def write_function(self, function_name, num_locals):
         loop_label = f"{function_name}_INIT_LOCALS_LOOP"
@@ -298,20 +289,20 @@ class CodeWriter:
 
 
     def write_return(self):
-        # Save LCL in FRAME
+        
         self.write("@LCL")
         self.write("D=M")
         self.write("@R13")
         self.write("M=D")
 
-        # Retrieve return address
+       
         self.write("@5")
         self.write("A=D-A")
         self.write("D=M")
         self.write("@R14")
         self.write("M=D")
 
-        # Reposition return value for caller
+       
         self.write("@SP")
         self.write("AM=M-1")
         self.write("D=M")
@@ -349,7 +340,7 @@ class CodeWriter:
         self.write(f"@LCL")
         self.write("M=D")
 
-        # Jump to return address
+      
         self.write("@R14")
         self.write("A=M")
         self.write("0;JMP")
