@@ -110,12 +110,34 @@ code_writer = CodeWriter("output.asm")
 # Teste da função write_function
 # code_writer = CodeWriter()
 
-# Teste 1: function Main.testFunction 2
-code_writer.write_function("Main.testFunction", 2)
+code_writer = CodeWriter("output.asm")
 
-# Exibindo o código gerado
+# Configurar o nome do arquivo VM
+code_writer.set_file_name("SimpleFunction.vm")
+
+# Escrever a função SimpleFunction.test
+code_writer.write_function("test", 2)
+
+# Adicionar o código VM
+vm_code = """
+push local 0
+push local 1
+add
+not
+push argument 0
+add
+push argument 1
+sub
+return
+"""
+
+for line in vm_code.split('\n'):
+    if line.strip():  # Ignorar linhas em branco
+        code_writer.write(line)
+
+# Visualizar o código assembly gerado
+print("Código Assembly gerado:")
 print(code_writer.code_output())
-
 
 
 
