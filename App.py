@@ -43,6 +43,26 @@ def main():
                             code_writer.writePush(command.args[0], int(command.args[1]))
                         elif command.type == Command.Type.POP:
                             code_writer.writePop(command.args[0], int(command.args[1]))
+                        elif command.type == Command.Type.NEG:
+                            code_writer.writeArithmeticNeg()
+                        elif command.type == Command.Type.AND:
+                            code_writer.write_arithmetic_and()
+                        elif command.type == Command.Type.OR:
+                            code_writer.write_arithmetic_or()
+                        elif command.type == Command.Type.NOT:
+                            code_writer.write_arithmetic_not()
+                        elif command.type == Command.Type.EQ:
+                            code_writer.write_arithmetic_eq()
+                        elif command.type == Command.Type.GT:
+                            code_writer.write_arithmetic_gt()
+                        elif command.type == Command.Type.LT:
+                            code_writer.write_arithmetic_lt()
+                        elif command.type == Command.Type.IFGOTO:
+                            code_writer.write_if(command.args[0])
+                        elif command.type == Command.Type.LABEL:
+                            code_writer.write_label(command.args[0])
+                        elif command.type == Command.Type.GOTO:
+                            code_writer.write_goto(command.args[0])
                     else:
                         break
                 code_writer.save()
@@ -68,6 +88,26 @@ def main():
                         code_writer.writePush(command.args[0], int(command.args[1]))
                     elif command.type == Command.Type.POP:
                         code_writer.writePop(command.args[0], int(command.args[1]))
+                    elif command.type == Command.Type.NEG:
+                        code_writer.writeArithmeticNeg()
+                    elif command.type == Command.Type.AND:
+                        code_writer.write_arithmetic_and()
+                    elif command.type == Command.Type.OR:
+                        code_writer.write_arithmetic_or()
+                    elif command.type == Command.Type.NOT:
+                        code_writer.write_arithmetic_not()
+                    elif command.type == Command.Type.EQ:
+                        code_writer.write_arithmetic_eq()
+                    elif command.type == Command.Type.GT:
+                        code_writer.write_arithmetic_gt()
+                    elif command.type == Command.Type.LT:
+                        code_writer.write_arithmetic_lt()
+                    elif command.type == Command.Type.IFGOTO:
+                        code_writer.write_if(command.args[0])
+                    elif command.type == Command.Type.LABEL:
+                        code_writer.write_label(command.args[0])
+                    elif command.type == Command.Type.GOTO:
+                        code_writer.write_goto(command.args[0])
                 else:
                     break
             code_writer.save()

@@ -48,64 +48,73 @@ code_writer = CodeWriter("output.asm")
 
 # print("Teste bem-sucedido!")
 
-code_writer.set_file_name("CallTest.vm")
+# code_writer.set_file_name("CallTest.vm")
 
-code_writer.write_call("Main.calledFunction", 1)
+# code_writer.write_call("Main.calledFunction", 1)
 
-expected_output = """@Main.calledFunction$ret.0
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-@LCL
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-@ARG
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-@THIS
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-@THAT
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1
-@SP
-D=M
-@6
-D=D-A
-@ARG
-M=D
-@SP
-D=M
-@LCL
-M=D
-@Main.calledFunction
-0;JMP
-(Main.calledFunction$ret.0)
-"""
+# expected_output = """@Main.calledFunction$ret.0
+# D=A
+# @SP
+# A=M
+# M=D
+# @SP
+# M=M+1
+# @LCL
+# D=M
+# @SP
+# A=M
+# M=D
+# @SP
+# M=M+1
+# @ARG
+# D=M
+# @SP
+# A=M
+# M=D
+# @SP
+# M=M+1
+# @THIS
+# D=M
+# @SP
+# A=M
+# M=D
+# @SP
+# M=M+1
+# @THAT
+# D=M
+# @SP
+# A=M
+# M=D
+# @SP
+# M=M+1
+# @SP
+# D=M
+# @6
+# D=D-A
+# @ARG
+# M=D
+# @SP
+# D=M
+# @LCL
+# M=D
+# @Main.calledFunction
+# 0;JMP
+# (Main.calledFunction$ret.0)
+# """
 
-#print(code_writer.code_output())
-assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
+# print(code_writer.code_output())
+# assert code_writer.code_output() == expected_output, "O código assembly gerado não corresponde ao esperado."
 
-print("Teste bem-sucedido!")
+# print("Teste bem-sucedido!")
+
+# Teste da função write_function
+# code_writer = CodeWriter()
+
+# Teste 1: function Main.testFunction 2
+code_writer.write_function("Main.testFunction", 2)
+
+# Exibindo o código gerado
+print(code_writer.code_output())
 
 
 

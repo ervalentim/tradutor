@@ -11,6 +11,9 @@ class Command:
         NOT = "NOT"
         PUSH = "PUSH"
         POP = "POP"
+        LABEL = "LABEL"
+        GOTO = "GOTO"
+        IFGOTO = "IF-GOTO"
 
     def __init__(self, command):
         self.type = command[0].upper()

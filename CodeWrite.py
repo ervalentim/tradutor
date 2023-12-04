@@ -36,7 +36,7 @@ class CodeWriter:
             self.write("@SP")
             self.write("M=M+1")
         elif seg in ["static", "temp", "pointer"]:
-            self.write(f"@{self.register_name(seg, index)}  // push {seg} {index}")
+            self.write(f"@{self.registerName(seg, index)}  // push {seg} {index}")
             self.write("D=M")
             self.write("@SP")
             self.write("A=M")
@@ -44,7 +44,7 @@ class CodeWriter:
             self.write("@SP")
             self.write("M=M+1")
         else:
-            self.write(f"@{self.register_name(seg, 0)}  // push {seg} {index}")
+            self.write(f"@{self.registerName(seg, 0)}  // push {seg} {index}")
             self.write("D=M")
             self.write(f"@{index}")
             self.write("A=D+A")
@@ -206,11 +206,11 @@ class CodeWriter:
         formatted_label = f"{self.module_name}${label}"
         self.write(f"({formatted_label})")
     def write_goto(self, label):
-        formatted_label = f"{self.module_name}.{label}"
+        formatted_label = f"{self.module_name}${label}"
         self.write(f"@{formatted_label}")
         self.write("0;JMP")
     def write_if(self, label):
-        formatted_label = f"{self.module_name}.{label}"
+        formatted_label = f"{self.module_name}${label}"
         self.write("@SP")
         self.write("AM=M-1")
         self.write("D=M")
@@ -258,17 +258,20 @@ class CodeWriter:
 
         # Write return label
         self.write(f"({return_label})")
+
     def write_function(self, function_name, num_locals):
-        formatted_function_name = f"{self.module_name}.{function_name}"
+        formatted_function_name = f"{self.module_name}${function_name}"
         self.write(f"({formatted_function_name})")
 
-        # Initialize local variables to 0
-        for _ in range(num_locals):
+        # Set up local variables to 0
+        if num_locals > 0:
             self.write("@SP")
             self.write("A=M")
-            self.write("M=0")
+            for _ in range(num_locals):
+                self.write("M=0")
+                self.write("@SP")
+                self.write("M=M+1")
             self.write("@SP")
-            self.write("M=M+1")
 
     def write_return(self):
         # Save LCL in FRAME
