@@ -203,36 +203,43 @@ class CodeWriter:
 
 # Novos métodos
     def write_label(self, label):
+        self.write(f"({label})")
 
-        formatted_label = f"{self.module_name}${label}"
-        self.write(f"({formatted_label})")
     def write_goto(self, label):
-        formatted_label = f"{self.module_name}${label}"
-        self.write(f"@{formatted_label}")
+        self.write(f"@{label}")
         self.write("0;JMP")
 
     def write_if(self, label):
-        formatted_label = f"{self.module_name}${label}"
         self.write("@SP")
         self.write("AM=M-1")
         self.write("D=M")
-        self.write(f"@{formatted_label}")
+        self.write(f"@{label}")
         self.write("D;JNE")
+    
+    # def write_frame_push(segment):
+    #         self.write(f"@{segment}")
+    #         self.write("D=M")
+    #         self.write("@SP")
+    #         self.write("A=M")
+    #         self.write("M=D")
+    #         self.write("@SP")
+    #         self.write("M=M+1")
 
     def write_call(self, function_name, num_args):
-        return_label = f"{function_name}$ret.{self.syn_count}"
+        comment = f"// call {function_name} {num_args}"
+
+        return_addr = f"{function_name}_RETURN_{self.syn_count}"
         self.syn_count += 1
 
-        # Push return address
-        self.write(f"@{return_label} // {function_name} {num_args}")
+        self.write(f"@{return_addr} {comment}")  # push return-addr
         self.write("D=A")
         self.write("@SP")
         self.write("A=M")
         self.write("M=D")
         self.write("@SP")
         self.write("M=M+1")
-        # Push LCL, ARG, THIS, THAT
-        for segment in ["LCL", "ARG", "THIS", "THAT"]:
+
+        def write_frame_push(segment):
             self.write(f"@{segment}")
             self.write("D=M")
             self.write("@SP")
@@ -241,40 +248,54 @@ class CodeWriter:
             self.write("@SP")
             self.write("M=M+1")
 
-        # Set ARG to SP - 5 - num_args
-        self.write(f"@{num_args}")
+        write_frame_push("LCL")
+        write_frame_push("ARG")
+        write_frame_push("THIS")
+        write_frame_push("THAT")
+
+        self.write(f"@{num_args}")  # ARG = SP-n-5
         self.write("D=A")
         self.write("@5")
         self.write("D=D+A")
         self.write("@SP")
+        self.write("D=M-D")
         self.write("@ARG")
         self.write("M=D")
 
-        # Set LCL to SP
-        self.write("@SP")
+        self.write("@SP")  # LCL = SP
         self.write("D=M")
         self.write("@LCL")
         self.write("M=D")
 
-        # Jump to function
         self.write_goto(function_name)
 
-        # Write return label
-        self.write(f"({return_label})")
+        self.write(f"({return_addr})")  # (return-address)
 
     def write_function(self, function_name, num_locals):
-        formatted_function_name = f"{self.module_name}${function_name}"
-        self.write(f"({formatted_function_name})")
+        loop_label = f"{function_name}_INIT_LOCALS_LOOP"
+        loop_end_label = f"{function_name}_INIT_LOCALS_END"
 
-        # Set up local variables to 0
-        if num_locals > 0:
-            self.write("@SP")
-            self.write("A=M")
-            for _ in range(num_locals):
-                self.write("M=0")
-                self.write("@SP")
-                self.write("M=M+1")
-            self.write("@SP")
+        self.write(f"({function_name})  // initialize local variables")
+        self.write(f"@{num_locals}")
+        self.write("D=A")
+        self.write("@R13")
+        self.write("M=D")
+        self.write(f"({loop_label})")
+        self.write(f"@{loop_end_label}")
+        self.write("D;JEQ")
+        self.write("@0")
+        self.write("D=A")
+        self.write("@SP")
+        self.write("A=M")
+        self.write("M=D")
+        self.write("@SP")
+        self.write("M=M+1")
+        self.write("@R13")
+        self.write("MD=M-1")
+        self.write(f"@{loop_label}")
+        self.write("0;JMP")
+        self.write(f"({loop_end_label})")
+
 
     def write_return(self):
         # Save LCL in FRAME
@@ -303,13 +324,30 @@ class CodeWriter:
         self.write("@SP")
         self.write("M=D+1")
 
-        # Restore THAT, THIS, ARG, LCL of caller
-        for segment, offset in zip(["THAT", "THIS", "ARG", "LCL"], [1, 2, 3, 4]):
-            self.write("@R13")
-            self.write("AM=M-1")
-            self.write("D=M")
-            self.write(f"@{offset}")
-            self.write("M=D")
+        self.write("@R13")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write(f"@THAT")
+        self.write("M=D")
+
+
+        self.write("@R13")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write(f"@THIS")
+        self.write("M=D")
+
+        self.write("@R13")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write(f"@ARG")
+        self.write("M=D")
+
+        self.write("@R13")
+        self.write("AM=M-1")
+        self.write("D=M")
+        self.write(f"@LCL")
+        self.write("M=D")
 
         # Jump to return address
         self.write("@R14")

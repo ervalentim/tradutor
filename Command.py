@@ -18,6 +18,7 @@ class Command:
         FUNCTION = "FUNCTION"
         RETURN = "RETURN"
         INIT = "INIT"
+        IF = "IF"
 
     def __init__(self, command):
         self.type = command[0].upper()
